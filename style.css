@@ -1,0 +1,45 @@
+* {
+
+    color: black;
+}
+table, tr, td {
+    border: 1px solid black;
+    padding: 5px;
+    font-family: "Times New Roman", serif;
+    table-layout: auto;
+
+}
+tr:hover {
+    background-color: lightslategrey;
+}
+td:hover {
+    background-color: lightblue;
+}
+table:hover {
+    background-color: lightslategrey;
+}
+.kasse {
+    display: inline;
+    color: gray;
+}
+.knap {
+    color: red;
+}
+tr {
+
+    width: 30px;
+    height: 30px;
+
+}
+
+td {
+    height: 20px;
+    width: 142px;
+    text-align: center;
+
+}
+
+img {
+    height: 100px;
+    width: 100px;
+}

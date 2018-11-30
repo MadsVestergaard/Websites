@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <meta charset="UTF-8">
+    <title>Baltimore Crime</title>
+    <script type="application/javascript" src="https://digitalliteracy.cc.au.dk/crime-api/client-api.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+</head>
+<body>
+<div class="kasse" id="searchbox">
+<input id="tekst" type="text" name="">
+
+
+    <select id="sort">
+        <option value="date-time-asc">Date-Time-Asc</option>
+        <option value="date-time-desc">Date-Time-Desc</option>
+        <option value="neighborhood-asc">Neighborhood-Asc</option>
+        <option value="neighborhood-desc">Neighborhood-Desc</option>
+    </select>
+
+    <select name="sort" id = "group">
+        <option value = "weapon">Weapons</option>
+        <option value="neighborhood"> Neighborhood</option>
+    </select>
+    <button id="knap" type="button">Submit</button>
+</div>
+
+<div id="graf">
+
+</div>
+<div id="crimes">
+
+</div>
+
+
+
+<script type="application/javascript">
+    let input;
+    let crimes = [];
+    let searchInput = document.getElementById("tekst");
+    //let sortSelector = document.getElementById("sort").value;
+    searchInput.addEventListener("keydown", updateInput);
+    let knap = document.getElementById("knap");
+    knap.addEventListener("click", apiSearch);
+    let search = document.getElementById("tekst").value;
+
+    function apiSearch() {
+        api.search(cb1, input, document.getElementById("sort").value, );
+        api.groupBy(cb2, input, document.getElementById("group").value);
+    }
+
+    /*function cb2(result) {
+    api.groupBy((result)=> {
+        let kort = result.data;
+        let liste = [];
+        let keys = Array.from(kort.keys());
+
+        for(i = 0; i < keys.length; i++) {
+            liste.push({title: keys[i], count: kort.get(keys[i])});
+        }
+
+        api.drawChart(liste, "graf", "Graph");
+    }, search, document.getElementById("group").value);
+    };*/
+    function cb2(result) {
+
+
+        console.log(result);
+        let liste = [];
+        let entries = Array.from(result.data.entries());
+        let sortedEntries = entries.sort((entry1, entry2) => entry2[1] - entry1[1]);
+
+        for (let sortedEntry of sortedEntries) {
+            if (sortedEntry[0] === '') {
+                sortedEntry[0] = "None registered";
+            }
+            let obj = {
+                title: sortedEntry[0],
+                count: sortedEntry[1]
+            };
+            liste.push(obj);
+        }
+        console.log(liste);
+        api.drawChart(liste, "graf", "Graph");
+
+    }
+    document.getElementById('tekst').addEventListener('keypress', function(e) {
+        let key = e.which;
+        if (key === 13) {
+            apiSearch()
+        }
+    });
+
+
+
+    function updateInput() {
+        input = document.getElementById("tekst").value;
+
+    }
+
+    function cb1(result) {
+        document.getElementById("crimes").innerHTML = "";
+        //console.log(result);
+        crimes = result.data;
+        let body = '<tbody>';
+        for (let i = 0; i < crimes.length; i++) {
+            body += '<table>';
+            body += '<tr>';
+            body += '<td>' + crimes[i].date + '</td>';
+            body += '<td>' + crimes[i].time + '</td>';
+            body += '<td>' + crimes[i].description + '</td>';
+            body += '<td>' + crimes[i].inOut + '</td>';
+            body += '<td>' + crimes[i].weapon + '</td>';
+            body += '<td>' + crimes[i].neighborhood + '</td>';
+            body += '<td>' + crimes[i].premise + '</td>';
+            if (crimes[i].description === "LARCENY FROM AUTO") {
+                body += '<td> <img src="pics/larcencyAuto.jpg"</td>'
+            } else if (crimes[i].description === "ROBBERY - STREET") {
+                body += '<td> <img src="pics/robbery.png"</td>'
+            } else if (crimes[i].description === "LARCENY") {
+                body += '<td> <img src="pics/larcency.png"</td>'
+            } else if (crimes[i].description === "BURGLARY") {
+                body += '<td> <img src="pics/burglary.png"</td>'
+            } else if (crimes[i].description === "AGG. ASSAULT") {
+                body += '<td> <img src="pics/agg_assault.png"</td>'
+            } else if (crimes[i].description === "COMMON ASSAULT") {
+                body += '<td> <img src="pics/assault.png"</td>'
+            } else if (crimes[i].description === "ROBBERY - RESIDENCE") {
+                body += '<td> <img src="pics/robbery.png"</td>'
+            } else if (crimes[i].description === "ROBBERY - COMMERCIAL") {
+                body += '<td> <img src="pics/commercial.png"</td>'
+            } else if (crimes[i].description === "RAPE") {
+                body += '<td> <img src="pics/rape.png"</td>'
+            } else if (crimes[i].description === "AUTO THEFT") {
+                body += '<td> <img src="pics/auto.png"</td>'
+            } else if (crimes[i].description === "ARSON") {
+                body += '<td> <img src="pics/arson.png"</td>'
+            } else if (crimes[i].description === "ASSAULT BY THREAT") {
+                body += '<td> <img src="pics/threat.png"</td>'
+            }
+            body += '</tr>';
+            body += '</table>';
+        }
+        body += '</tbody>';
+        document.getElementById('crimes').innerHTML = body;
+    }
+
+</script>
+
+</body>
+</html>
